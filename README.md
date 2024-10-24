@@ -13,7 +13,7 @@ The "solution" proposed by Truma (or should I say ACME of Wyle E. Coyote fame?) 
 with a lower flow rate, in parallel to the standard one and to manually switch on either one or the other.
 
 This ~~botch job~~ kit (consisting of a pump, a couple meters of plastic tubing, two plastic Y fittings, a switch and a wiring harness) costs
-more than 600€ and the installation, if made by a professional, will cost about half that.
+[more than 600€](https://www.grossostore.eu/product/altitude-set-for-combi-d/) and the installation, if made by a professional, will cost about half that.
 
 The new model of the heater (with the round cowl), instead of the Wyle E. Coyote solution, has a barometric sensor so it
 can reduce the frequency of the pulses depending on the altitude.
