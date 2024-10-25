@@ -42,7 +42,7 @@ void setup() {
   serial_debug = true;
   compensator.SetSerialDebug(true);
 
-  if (!bmp.begin(BMP280_ADDRESS_ALT, BMP280_CHIPID)) {
+  if (!bmp.begin(BMP280_ADDRESS, BMP280_CHIPID)) {
     /* too early to have serial debug, will report to the mqtt broker 
     Serial.println("Could not find a valid BMP280 sensor, check wiring or "
                         "try a different address!"); */
