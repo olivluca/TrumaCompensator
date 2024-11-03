@@ -18,7 +18,7 @@ This ~~botch job~~ kit (consisting of a pump, a couple meters of plastic tubing,
 The new model of the heater (with the round cowl), instead of the Wyle E. Coyote solution, has a barometric sensor so it
 can reduce the frequency of the pulses depending on the altitude.
 
-This is what an old [espar/eberspacher high altitude kit](https://www.heatso.com/espar-eberspacher-high-altitude-kit-22-1000-33-2200-h-kit-hak/) did: it intercepted the 12V for the pump coming 
+This is what an old [espar/eberspacher high altitude kit](https://www.yumpu.com/en/document/view/19513829/high-altitude-compensator-05-2009pdf-espar-of-michigan) did: it intercepted the 12V for the pump coming 
 from the heater and sent the pulses to the pump with a different frequency depending on the altitude.
 
 This repository tries to do the same, using a bmp280 barometric sensor to read the altitude.
