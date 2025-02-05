@@ -12,8 +12,6 @@ class TCompensator {
 
         //micros when the last incoming pulse started
         unsigned long Finput_pulse_start;
-        //duration of the last incoming pulse
-        unsigned long Fpulse_duration;
         //interval between the two last input pulses
         unsigned long Finput_pulse_interval;
         //micros when the last output pulse was generated
@@ -29,6 +27,7 @@ class TCompensator {
         unsigned long Ftest_pulse_start;
         //interval of the test pulses
         unsigned long Ftest_pulse_interval=500*1000;
+        uint8_t Ftest_pulse_on=HIGH;
         //waiting for the first input pulse
         boolean Fidle;
 
@@ -44,9 +43,16 @@ class TCompensator {
         TCompensator(int input, int output, int testpin);  
         void Loop(); 
         void SetCompensation(float AValue) { Fcompensation = trunc(AValue*10); }
-        void SetTestPulseInterval(int Avalue) {Ftest_pulse_interval = Avalue; }
+        void SetTestPulseInterval(int Avalue) {
+            if (Avalue>0) {
+                  Ftest_pulse_interval = Avalue;
+                  Ftest_pulse_on = HIGH;
+                } else {
+                  Ftest_pulse_interval = -Avalue;
+                  Ftest_pulse_on = LOW;
+                }
+        }
         void SetSerialDebug(boolean Avalue) {Fserial_debug = Avalue; } 
         unsigned long InputFrequency() { return Finput_frequency; }
         unsigned long OutputFrequency() { return Foutput_frequency; }
-        unsigned long PulseDuration() { return Fpulse_duration; }
 };

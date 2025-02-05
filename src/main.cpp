@@ -174,7 +174,12 @@ void loop() {
   delay(1000);
   mqttClient.publish("trumacomp/status/infreq",String(compensator.InputFrequency()));
   mqttClient.publish("trumacomp/status/outfreq",String(compensator.OutputFrequency()));
-  mqttClient.publish("trumacomp/status/pulseduration",String(compensator.PulseDuration()));
+  if (bmpok) {
+    float temperature = bmp.readTemperature();
+    mqttClient.publish("trumacomp/status/temperature",String(temperature));
+    Serial.print("Temperature ");
+    Serial.println(temperature);
+  }
   if (bmpok || simulate_altitude) {
     float altitude;
     if (simulate_altitude) {
