@@ -2,6 +2,11 @@
 
 #define PULSE_DURATION 40000 //40ms
 #define MIN_PULSE_INTERVAL PULSE_DURATION*2
+#define PWM_PERIOD 3000 //3ms
+#define PWM_DUTY_CYCLE 80 //%
+#define PWM_PERIOD_ON (PWM_PERIOD * PWM_DUTY_CYCLE / 100)
+#define ONESECOND 1000000
+
 TCompensator::TCompensator(int input, int output, int testpin)
 {
     Finput=input;
@@ -22,7 +27,6 @@ TCompensator::TCompensator(int input, int output, int testpin)
     Fcompensation=0;
 }
 
-#define ONESECOND 1000000
 void TCompensator::Loop()
 {
   unsigned long now=micros();
@@ -36,8 +40,8 @@ void TCompensator::Loop()
         }
         Finput_pulse_start=now;
         Foutput_pulse_start=now;
-        Foutput_pulse_interval=10*1000*1000; //unknown, start with ten seconds
-        Finput_pulse_interval=2 * 1000 * 1000; //unknown, start with 2 seconds
+        Foutput_pulse_interval=10 * ONESECOND; //unknown, start with ten seconds
+        Finput_pulse_interval=2 * ONESECOND; //unknown, start with 2 seconds
         Fidle=false;
       } else if (now-Finput_pulse_start>=MIN_PULSE_INTERVAL) {
         Finput_pulse_interval=now-Finput_pulse_start;
@@ -79,7 +83,7 @@ void TCompensator::Loop()
       Foutput_pulse_start=now;
     }
     unsigned long diff=now-Foutput_pulse_start;
-    if (diff<PULSE_DURATION && diff % 3000 < 2400) {
+    if (diff<PULSE_DURATION && diff % PWM_PERIOD < PWM_PERIOD_ON) {
       digitalWrite(Foutput,HIGH);
       digitalWrite(BUILTIN_LED, HIGH);
     } else {
@@ -97,7 +101,7 @@ void TCompensator::Loop()
       Ftest_pulse_start=now;
     }
     unsigned long diff=now-Ftest_pulse_start;
-    if (diff<40*1000 && diff % 3000 < 6400) {
+    if (diff<PULSE_DURATION && diff % PWM_PERIOD < PWM_PERIOD_ON) {
       digitalWrite(Ftestpin, Ftest_pulse_on);
     } else {
       digitalWrite(Ftestpin, !Ftest_pulse_on);
