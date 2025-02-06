@@ -26,8 +26,8 @@ class TCompensator {
         //micros when the last test pulse started
         unsigned long Ftest_pulse_start;
         //interval of the test pulses
-        unsigned long Ftest_pulse_interval=500*1000;
-        uint8_t Ftest_pulse_on=HIGH;
+        unsigned long Ftest_pulse_interval=100*1000;
+        uint8_t Ftest_pulse_on=LOW; //to mimic the inversion by the optocoupler
         //waiting for the first input pulse
         boolean Fidle;
 
