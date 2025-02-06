@@ -79,7 +79,7 @@ void TCompensator::Loop()
       Foutput_pulse_start=now;
     }
     unsigned long diff=now-Foutput_pulse_start;
-    if (diff<PULSE_DURATION && diff % 3000 < 600) {
+    if (diff<PULSE_DURATION && diff % 3000 < 2400) {
       digitalWrite(Foutput,HIGH);
       digitalWrite(BUILTIN_LED, HIGH);
     } else {
@@ -97,7 +97,7 @@ void TCompensator::Loop()
       Ftest_pulse_start=now;
     }
     unsigned long diff=now-Ftest_pulse_start;
-    if (diff<40*1000 && diff % 3000 < 600) {
+    if (diff<40*1000 && diff % 3000 < 6400) {
       digitalWrite(Ftestpin, Ftest_pulse_on);
     } else {
       digitalWrite(Ftestpin, !Ftest_pulse_on);
