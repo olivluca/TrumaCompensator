@@ -39,8 +39,10 @@ void CompensatorLoop(void * pvParameters);
 
 void setup() {
   Serial.begin(115200);
+  /*
   serial_debug = true;
   compensator.SetSerialDebug(true);
+  */
 
   if (!bmp.begin(BMP280_ADDRESS, BMP280_CHIPID)) {
     /* too early to have serial debug, will report to the mqtt broker 
