@@ -28,6 +28,8 @@ float simulated_altitude;
 
 boolean serial_debug = false;
 
+boolean mqtt_publish = false;
+
 unsigned int lastwifi;
 boolean wifistarted = false;
 int oldin = true;
@@ -174,14 +176,20 @@ void loop() {
     ArduinoOTA.handle();
   }
   delay(1000);
-  mqttClient.publish("trumacomp/status/infreq",String(compensator.InputFrequency()));
-  mqttClient.publish("trumacomp/status/outfreq",String(compensator.OutputFrequency()));
-  mqttClient.publish("trumacomp/status/dutycycle",String(compensator.DutyCycle()));
+  if (mqtt_publish) {
+    mqttClient.publish("trumacomp/status/infreq",String(compensator.InputFrequency()));
+    mqttClient.publish("trumacomp/status/outfreq",String(compensator.OutputFrequency()));
+    mqttClient.publish("trumacomp/status/dutycycle",String(compensator.DutyCycle()));
+  }
   if (bmpok) {
     float temperature = bmp.readTemperature();
-    mqttClient.publish("trumacomp/status/temperature",String(temperature));
-    Serial.print("Temperature ");
-    Serial.println(temperature);
+    if (mqtt_publish) {
+      mqttClient.publish("trumacomp/status/temperature",String(temperature));
+    }
+    if (serial_debug) {
+      Serial.print("Temperature ");
+      Serial.println(temperature);
+    }
   }
   if (bmpok || simulate_altitude) {
     float altitude;
@@ -193,9 +201,11 @@ void loop() {
     //the compensation_factor is for every 1000m of altitude
     float compensation=altitude*compensation_factor/1000.0;
     compensator.SetCompensation(compensation);
-    mqttClient.publish("trumacomp/status/altitude",String(altitude));
-    mqttClient.publish("trumacomp/status/compensation",String(compensation));
-    mqttClient.publish("trumacomp/status/micros",String(micros()));
+    if (mqtt_publish) {
+      mqttClient.publish("trumacomp/status/altitude",String(altitude));
+      mqttClient.publish("trumacomp/status/compensation",String(compensation));
+      mqttClient.publish("trumacomp/status/micros",String(micros()));
+    }
     if (serial_debug) {
       Serial.print("Approx. altitude  ");
       Serial.print(altitude);
@@ -268,7 +278,7 @@ void callback_altitude(const String& payload) {
 
 void callback_debug(const String& payload) {
   boolean old_serial_debug = serial_debug;
-  serial_debug=(payload=="1" || payload=="yes" || payload=="false");
+  serial_debug=(payload=="1" || payload=="yes" || payload=="true");
   compensator.SetSerialDebug(serial_debug);
   if (serial_debug || old_serial_debug) {
     if (serial_debug) {
@@ -279,6 +289,17 @@ void callback_debug(const String& payload) {
     if (!serial_debug) {
       Serial.println("");
       Serial.flush();
+    }
+  }
+}
+
+void callback_publish(const String& payload) {
+  mqtt_publish=(payload=="1" || payload=="yes" || payload=="true");
+  if (serial_debug) {
+    if (mqtt_publish) {
+      Serial.print("mqtt publish enabled");
+    } else {
+      Serial.print("mqtt_publish disabled");
     }
   }
 }
@@ -301,6 +322,8 @@ void mqtt_callback(const String& topic, const String& payload) {
     callback_compensation(payload);
   } else if (topic=="trumacomp/set/debug") {
     callback_debug(payload);
+  } else if (topic=="trumacomp/set/publish") {
+    callback_publish(payload);
   } else {
     if (serial_debug) {
       Serial.print("unknown topic");
