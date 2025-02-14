@@ -176,6 +176,7 @@ void loop() {
   delay(1000);
   mqttClient.publish("trumacomp/status/infreq",String(compensator.InputFrequency()));
   mqttClient.publish("trumacomp/status/outfreq",String(compensator.OutputFrequency()));
+  mqttClient.publish("trumacomp/status/dutycycle",String(compensator.DutyCycle()));
   if (bmpok) {
     float temperature = bmp.readTemperature();
     mqttClient.publish("trumacomp/status/temperature",String(temperature));
@@ -220,6 +221,15 @@ void callback_testpulse(const String& payload) {
   if (serial_debug) {
     Serial.print("set test_pulse_interval to ");
     Serial.print(test_pulse_interval);
+  }
+}
+
+void callback_testpulsedutycycle(const String& payload) {
+  int test_pulse_duty_cycle=atoi(payload.c_str());
+  compensator.SetTestPulseDutyCycle(test_pulse_duty_cycle);
+  if (serial_debug) {
+    Serial.print("set test_pulse_duty_cycle to ");
+    Serial.print(test_pulse_duty_cycle);
   }
 }
 
@@ -283,6 +293,8 @@ void mqtt_callback(const String& topic, const String& payload) {
   }
   if (topic=="trumacomp/set/testpulse") {
     callback_testpulse(payload);
+  } else if (topic=="trumacomp/set/dutycycle") {
+    callback_testpulsedutycycle(payload);
   } else if (topic=="trumacomp/set/altitude") {
     callback_altitude(payload);
   } else if (topic=="trumacomp/set/compensation") {

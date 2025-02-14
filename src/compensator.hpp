@@ -1,5 +1,6 @@
 #pragma once
 #include <Arduino.h>
+#define PWM_PERIOD 3000 //3ms
 
 class TCompensator {
     private:
@@ -27,9 +28,19 @@ class TCompensator {
         unsigned long Ftest_pulse_start;
         //interval of the test pulses
         unsigned long Ftest_pulse_interval=100*1000;
+        //duty cycle of the test pulses
+        unsigned int Ftest_pulse_duty_cycle=100;
         uint8_t Ftest_pulse_on=LOW; //to mimic the inversion by the optocoupler
+        unsigned long Ftest_pulse_duty_on=PWM_PERIOD;
         //waiting for the first input pulse
         boolean Fidle;
+        //pwm
+        int FDutyCycle;
+        unsigned long FPwmTime;
+        unsigned long FNextPwmTime;
+        unsigned long FPwmOnTime;
+        unsigned long FRisingEdgeTime;
+        int FPulseCount;
 
         //stores the last input status (to detect changes)
         int Foldin;
@@ -38,6 +49,10 @@ class TCompensator {
         int Fcompensation; //output frequency = input frequency
 
         boolean Fserial_debug;
+
+        void CalcTestDutyCycle();
+        void ResetPwm();
+        void CheckPwm();
      
     public:
         TCompensator(int input, int output, int testpin);  
@@ -51,8 +66,11 @@ class TCompensator {
                   Ftest_pulse_interval = -Avalue;
                   Ftest_pulse_on = LOW;
                 }
+                CalcTestDutyCycle();
         }
+        void SetTestPulseDutyCycle(int Avalue) { Ftest_pulse_duty_cycle=Avalue; CalcTestDutyCycle(); }
         void SetSerialDebug(boolean Avalue) {Fserial_debug = Avalue; } 
         unsigned long InputFrequency() { return Finput_frequency; }
         unsigned long OutputFrequency() { return Foutput_frequency; }
+        int DutyCycle() { return FDutyCycle; }
 };
