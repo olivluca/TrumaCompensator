@@ -32,7 +32,9 @@ void TCompensator::CalcTestDutyCycle() {
     Ftest_pulse_duty_cycle=100;
   }
   Ftest_pulse_duty_on=PWM_PERIOD * Ftest_pulse_duty_cycle / 100;
-  Serial.printf("Test pulse duty on %d over %d\r\n",Ftest_pulse_duty_on, PWM_PERIOD);
+  if (Fserial_debug) {
+    Serial.printf("Test pulse duty on %d over %d\r\n",Ftest_pulse_duty_on, PWM_PERIOD);
+  }
 }
 
 void TCompensator::ResetPwm()
