@@ -7,9 +7,9 @@
 #include <esp_task_wdt.h>
 #include "compensator.hpp"
 
-#define INPIN  4
-#define TESTPIN 16
-#define OUTPIN 17
+#define INPIN  13
+#define TESTPIN 12
+#define OUTPIN 14
 
 int wificonnections = 0;
 int mqttconnections = 0;
