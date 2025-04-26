@@ -124,21 +124,8 @@ void setup() {
         });
 
   //watchdog, just in case something goes wrong
-  esp_task_wdt_config_t wdt_config = {
-    .timeout_ms = 10000,
-    .idle_core_mask = (1 << portNUM_PROCESSORS) - 1,  // Bitmask of all cores, https://github.com/espressif/esp-idf/blob/v5.2.2/examples/system/task_watchdog/main/task_watchdog_example_main.c
-    .trigger_panic = true                             // Enable panic to restart ESP32
-  };
-  esp_err_t e=esp_task_wdt_init(&wdt_config);
-  if (e==ESP_ERR_INVALID_STATE) {
-    Serial.println("watchdog already configured, reconfiguring");
-    e=esp_task_wdt_reconfigure(&wdt_config);
-  }
-  if (e==ESP_OK) {
-    Serial.println("Watchdog initialized ok");
-  } else {
-    Serial.println("Failed to initialize watchdog");
-  }
+  esp_task_wdt_init(10,true);
+  esp_task_wdt_add(NULL);
 }
 
 //checks and restart the wifi connection
@@ -233,12 +220,12 @@ void loop() {
 }
 
 /* mqtt handling */
-void handleMQTT(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data){
-  auto *event = static_cast<esp_mqtt_event_handle_t>(event_data);
+esp_err_t handleMQTT(esp_mqtt_event_handle_t event) {
   if (event->event_id==MQTT_EVENT_DISCONNECTED || event->event_id == MQTT_EVENT_ERROR) {
     mqttok=false;
   } 
   mqttClient.onEventCallback(event);
+  return ESP_OK;
 }
 
 void callback_testpulse(const String& payload) {
@@ -362,7 +349,7 @@ void PublishStatus() {
 
 // connection to the broker established, subscribe to the settings and
 // publish the status
-void onMqttConnect(esp_mqtt_client_handle_t client) {
+void onConnectionEstablishedCallback(esp_mqtt_client_handle_t client) {
   mqttok=true;
   if (serial_debug) {
     Serial.println("mqtt connected");
