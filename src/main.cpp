@@ -168,7 +168,6 @@ void CompensatorLoop(void * pvParameters) {
   while(1) {
     compensator.Loop();
     esp_task_wdt_reset();
-    delay(1);
   }
 };
 
@@ -178,6 +177,7 @@ void loop() {
   if (wifistarted) {
     ArduinoOTA.handle();
   }
+  esp_task_wdt_reset();
   delay(1000);
   if (mqtt_publish) {
     mqttClient.publish("trumacomp/status/infreq",String(compensator.InputFrequency()));
