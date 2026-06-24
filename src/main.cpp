@@ -11,6 +11,10 @@
 #define TESTPIN 12
 #define OUTPIN 14
 
+#define STATUS_TOPIC "trumacomp/status/online"
+#define STATUS_OFFLINE "offline"
+#define STATUS_ONLINE "online"
+
 int wificonnections = 0;
 int mqttconnections = 0;
 
@@ -69,7 +73,7 @@ void setup() {
   //starts the mqtt connection to the broker
   mqttClient.setURI(MQTT_URI, MQTT_USERNAME, MQTT_PASSWORD);
   mqttClient.setKeepAlive(30);
-  mqttClient.enableLastWillMessage("trumacomp/lwt", "I am going offline");
+  mqttClient.enableLastWillMessage(STATUS_TOPIC, STATUS_OFFLINE,true);
   mqttClient.enableDebuggingMessages(false);
   mqttClient.loopStart();
   
@@ -339,6 +343,7 @@ void mqtt_callback(const String& topic, const String& payload) {
 }
 
 void PublishStatus() {
+  mqttClient.publish(STATUS_TOPIC,STATUS_ONLINE,2,true);
   //publish bmp with retain
   if (bmpok) {
     mqttClient.publish("trumacomp/status/bmpdetected","yes",0,true);
