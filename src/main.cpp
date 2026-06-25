@@ -300,6 +300,24 @@ void callback_debug(const String& payload) {
   }
 }
 
+void callback_level(const String& payload) {
+  uint8_t level;
+  if (payload=="1" || payload=="HIGH" || payload=="high") {
+    level = HIGH;
+  } else {
+    level = LOW;
+  }
+  compensator.SetTestPulseLevel(level);
+  if (serial_debug) {
+    Serial.print("test signal level set to ");
+    if (level == HIGH) {
+      Serial.print("HIGH");
+    } else {
+      Serial.print("LOW");
+    }
+  }
+}
+
 void callback_publish(const String& payload) {
   mqtt_publish=(payload=="1" || payload=="yes" || payload=="true");
   if (serial_debug) {
@@ -321,6 +339,8 @@ void mqtt_callback(const String& topic, const String& payload) {
   }
   if (topic=="trumacomp/set/testpulse") {
     callback_testpulse(payload);
+  } else if (topic=="trumacomp/set/testlevel") {
+    callback_level(payload);
   } else if (topic=="trumacomp/set/dutycycle") {
     callback_testpulsedutycycle(payload);
   } else if (topic=="trumacomp/set/altitude") {

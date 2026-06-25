@@ -69,6 +69,7 @@ class TCompensator {
                 CalcTestDutyCycle();
         }
         void SetTestPulseDutyCycle(int Avalue) { Ftest_pulse_duty_cycle=Avalue; CalcTestDutyCycle(); }
+        void SetTestPulseLevel(int Alevel) { Ftest_pulse_on = Alevel; }
         void SetSerialDebug(boolean Avalue) {Fserial_debug = Avalue; } 
         unsigned long InputFrequency() { return Finput_frequency; }
         unsigned long OutputFrequency() { return Foutput_frequency; }
